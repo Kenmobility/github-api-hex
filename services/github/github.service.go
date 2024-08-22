@@ -1,4 +1,4 @@
-package api
+package github
 
 import (
 	"context"
@@ -13,32 +13,35 @@ import (
 	"github.com/kenmobility/github-api-hex/common/client"
 	"github.com/kenmobility/github-api-hex/dtos"
 	"github.com/kenmobility/github-api-hex/internal/domain"
+	"github.com/kenmobility/github-api-hex/services"
 )
 
 type GitHubAPIClient struct {
 	baseURL              string
 	token                string
+	fetchInterval        time.Duration
 	commitRepository     domain.CommitRepository
 	repositoryRepository domain.RepositoryRepository
 	client               *client.RestClient
-}
-
-func NewGitHubAPI(baseUrl string, token string, commitRepository domain.CommitRepository, repositoryRepository domain.RepositoryRepository) *GitHubAPIClient {
-	client := client.NewRestClient()
-
-	return &GitHubAPIClient{
-		baseURL:              baseUrl,
-		token:                token,
-		commitRepository:     commitRepository,
-		repositoryRepository: repositoryRepository,
-		client:               client,
-	}
 }
 
 func (g *GitHubAPIClient) getHeaders() map[string]string {
 	return map[string]string{
 		"Content-Type":  "application/json",
 		"Authorization": fmt.Sprintf("Bearer %s", g.token),
+	}
+}
+
+func NewGitHubAPIClient(baseUrl string, token string, fetchInterval time.Duration, commitRepository domain.CommitRepository, repositoryRepository domain.RepositoryRepository) services.RepositoryTracker {
+	client := client.NewRestClient()
+
+	return &GitHubAPIClient{
+		baseURL:              baseUrl,
+		token:                token,
+		fetchInterval:        fetchInterval,
+		commitRepository:     commitRepository,
+		repositoryRepository: repositoryRepository,
+		client:               client,
 	}
 }
 
@@ -84,6 +87,33 @@ func (g *GitHubAPIClient) FetchAndSaveCommits(ctx context.Context, repo domain.R
 	}
 
 	return result, nil
+}
+
+func StartTracking(t services.RepositoryTracker, fetchInterval time.Duration) {
+	go func() {
+		for {
+			t.RunRepositoryTracker()
+			time.Sleep(g.fetchInterval)
+		}
+	}()
+}
+
+func (g GitHubAPIClient) RunRepositoryTracker() {
+	ctx := context.Background()
+
+	trackedRepo, err := g.repositoryRepository.TrackedRepository(ctx)
+	if err != nil {
+		log.Printf("Error fetching tracked repository: %v", err)
+		return
+	}
+
+	if trackedRepo == nil {
+		log.Println("no repository set to track")
+		return
+	}
+	fmt.Printf("********Github repository tracking started for repo %s************\n",
+		trackedRepo.Name)
+	g.FetchAndSaveCommits(ctx, *trackedRepo, trackedRepo.StartDate, trackedRepo.EndDate)
 }
 
 func (g *GitHubAPIClient) fetchCommitsPage(url string) ([]dtos.GithubCommitResponse, string, error) {
