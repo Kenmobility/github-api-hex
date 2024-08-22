@@ -72,12 +72,12 @@ curl \
 ``` 
 curl -d '{"repo_public_id": "5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a","start_date": "","end_date": ""}'\
   -H "Content-Type: application/json" \
-  -X POST 127.0.0.1:5000/repository/track \
+  -X POST http://127.0.0.1:5000/repository/track \
 ```
 
 - GET Request to fetch N (as limit) top commit authors of the any added repository using its repository id with limit as query param
 ```
 curl -L \
-  -X GET 127.0.0.1:5000/top-authors/5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a?limit=5 \
+  -X GET http://127.0.0.1:5000/top-authors/5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a?limit=5 \
 ```
   
