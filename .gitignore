@@ -1,0 +1,8 @@
+.idea
+.env
+*error.log
+notes.md
+data/
+http/
+tmp/
+secrets.go
