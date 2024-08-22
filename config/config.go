@@ -26,10 +26,13 @@ type Config struct {
 	Port             string
 }
 
-func LoadConfig() *Config {
+func LoadConfig(path string) *Config {
 	var err error
 
-	if err := godotenv.Load(".env"); err != nil {
+	if path == "" {
+		path = ".env"
+	}
+	if err := godotenv.Load(path); err != nil {
 		log.Fatal("env config error: ", err)
 	}
 
