@@ -7,5 +7,5 @@ import (
 
 func CommitRoutes(r *gin.Engine, ch *handlers.CommitHandlers) {
 	r.GET("/commits/:repoId", ch.GetCommitsByRepositoryId)
-	r.GET("/top-authors", ch.GetTopCommitAuthors)
+	r.GET("/top-authors/:repoId", ch.GetTopCommitAuthors)
 }
