@@ -11,14 +11,19 @@ git clone https://github.com/kenmobility/github-api-hex.git
 cd github-api-hex
 go mod tidy
 ```
-## 2. environment variables:
+## 2. Duplicate .env.example file and rename to .env
+```bash
+cp .env.example .env
+```
+
+## 3. environment variables:
 - the .env file already has default variables that the program needs to run but for security reason, you can change the variables to your custom details.
 - to setup GitHub API token in order to change the GIT_HUB_TOKEN env variable, go to  [https://github.com/](GitHub) to set up a GitHub API token.
 
-## 3 Open Docker desktop application
+## 4 Open Docker desktop application
 - Ensure that docker desktop is started and running 
 
-## 4. Run makefile commands 
+## 5. Run makefile commands 
 - run 'make postgres' to pull and run PostgreSQL instance as docker container
 ```bash
 make postgres
@@ -27,19 +32,19 @@ make postgres
 ```bash
 make createdb
 ```
-## 5. Testing (optional)
+## 6. Testing (optional)
 
 Run 'make test' to run the unit tests:
 ```bash
 make test
 ```
-## 6. Start web server
+## 7. Start web server
 - run 'make server' to start the service
 ```bash
 make server
 ```
 
-## 7. Endpoint requests
+## 8. Endpoint requests
 - POST application/json Request to add a new repository
 ``` 
 curl -d '{"name": "GoogleChrome/chromium-dashboard","description": "","url": "https://github.com/GoogleChrome/chromium-dashboard"}'\
