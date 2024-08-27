@@ -40,12 +40,8 @@ func main() {
 	// Initialize Github Tracker service
 	trackerService := github.NewGitHubAPIClient(config.GitHubApiBaseURL, config.GitHubToken, config.FetchInterval, commitRepo, repoRepo)
 
-	// instantiate the GitHubAPI service
-	//githubService := github.NewTrackerService(gitHubAPIClient, commitRepo,
-	//	repoRepo, config)
-
 	//start GitHub tracking service asynchronously
-	go RunRepositoryTracker(trackerService)
+	go trackerService.StartTracking(config.FetchInterval)
 
 	server := gin.New()
 

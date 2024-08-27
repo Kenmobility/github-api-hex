@@ -35,7 +35,7 @@ func (g *GitHubAPIClient) getHeaders() map[string]string {
 func NewGitHubAPIClient(baseUrl string, token string, fetchInterval time.Duration, commitRepository domain.CommitRepository, repositoryRepository domain.RepositoryRepository) services.RepositoryTracker {
 	client := client.NewRestClient()
 
-	return &GitHubAPIClient{
+	gc := GitHubAPIClient{
 		baseURL:              baseUrl,
 		token:                token,
 		fetchInterval:        fetchInterval,
@@ -43,6 +43,8 @@ func NewGitHubAPIClient(baseUrl string, token string, fetchInterval time.Duratio
 		repositoryRepository: repositoryRepository,
 		client:               client,
 	}
+	ts := services.RepositoryTracker(&gc)
+	return ts
 }
 
 func (g *GitHubAPIClient) FetchAndSaveCommits(ctx context.Context, repo domain.Repository, since time.Time, until time.Time) ([]domain.Commit, error) {
@@ -89,16 +91,14 @@ func (g *GitHubAPIClient) FetchAndSaveCommits(ctx context.Context, repo domain.R
 	return result, nil
 }
 
-func StartTracking(t services.RepositoryTracker, fetchInterval time.Duration) {
-	go func() {
-		for {
-			t.RunRepositoryTracker()
-			time.Sleep(g.fetchInterval)
-		}
-	}()
+func (g GitHubAPIClient) StartTracking(fetchInterval time.Duration) {
+	for {
+		g.runRepositoryTracker()
+		time.Sleep(fetchInterval)
+	}
 }
 
-func (g GitHubAPIClient) RunRepositoryTracker() {
+func (g GitHubAPIClient) runRepositoryTracker() {
 	ctx := context.Background()
 
 	trackedRepo, err := g.repositoryRepository.TrackedRepository(ctx)
