@@ -61,13 +61,13 @@ func (ch CommitHandlers) GetTopCommitAuthors(ctx *gin.Context) {
 		return
 	}
 
-	authors, err := ch.commitController.GetTopRepositoryCommitAuthors(ctx, repositoryId, limit)
+	repoName, authors, err := ch.commitController.GetTopRepositoryCommitAuthors(ctx, repositoryId, limit)
 	if err != nil {
 		response.Failure(ctx, http.StatusInternalServerError, "error fetching top authors", err)
 		return
 	}
 
-	msg := fmt.Sprintf("%v top commit authors fetched successfully", limit)
+	msg := fmt.Sprintf("%v top commit authors of %s repository fetched successfully", limit, repoName)
 
 	response.Success(ctx, http.StatusOK, msg, authors)
 }

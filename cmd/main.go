@@ -17,7 +17,7 @@ import (
 
 func main() {
 	// load env variables
-	config := config.LoadConfig()
+	config := config.LoadConfig("")
 
 	// establish database connection
 	db := db.NewDatabase(*config)

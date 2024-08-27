@@ -10,7 +10,7 @@ import (
 
 type CommitController interface {
 	GetAllCommitsByRepository(ctx context.Context, repoId string, query dtos.APIPagingDto) (string, *dtos.AllCommitsResponse, error)
-	GetTopRepositoryCommitAuthors(ctx context.Context, repoId string, limit int) ([]string, error)
+	GetTopRepositoryCommitAuthors(ctx context.Context, repoId string, limit int) (string, []string, error)
 }
 
 type commitController struct {
@@ -38,11 +38,15 @@ func (c *commitController) GetAllCommitsByRepository(ctx context.Context, repoId
 	return repo.Name, commits, nil
 }
 
-func (c *commitController) GetTopRepositoryCommitAuthors(ctx context.Context, repoId string, limit int) ([]string, error) {
+func (c *commitController) GetTopRepositoryCommitAuthors(ctx context.Context, repoId string, limit int) (string, []string, error) {
 	repo, err := c.repoRepo.RepositoryByPublicId(ctx, repoId)
 	if err != nil {
-		return nil, message.ErrInvalidRepositoryId
+		return "", nil, message.ErrInvalidRepositoryId
+	}
+	authors, err := c.commitRepo.TopCommitAuthorsByRepository(ctx, *repo, limit)
+	if err != nil {
+		return "", nil, err
 	}
 
-	return c.commitRepo.TopCommitAuthorsByRepository(ctx, *repo, limit)
+	return repo.Name, authors, nil
 }

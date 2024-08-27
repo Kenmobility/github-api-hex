@@ -60,7 +60,7 @@ func (gc *GormCommitRepository) TopCommitAuthorsByRepository(ctx context.Context
 	var authors []string
 	err := gc.DB.WithContext(ctx).Model(&domain.Commit{}).
 		Select("author").
-		Where("repository.name = ?", repository.Name).
+		Where("repository_id = ?", repository.ID).
 		Group("author").
 		Order("count(author) DESC").
 		Limit(limit).

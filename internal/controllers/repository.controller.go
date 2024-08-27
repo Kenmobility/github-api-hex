@@ -128,6 +128,7 @@ func (r *repositoryController) GetAllRepositories(ctx context.Context) ([]dtos.R
 
 	for _, repo := range repos {
 		rr := dtos.RepositoryResponse{
+			Id:              repo.PublicID,
 			Name:            repo.Name,
 			Description:     repo.Description,
 			URL:             repo.URL,
