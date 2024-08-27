@@ -88,7 +88,6 @@ func (r *repositoryController) TrackRepository(ctx context.Context, data dtos.Tr
 		endDate = r.config.DefaultEndDate
 	}
 
-	repo.IsTracking = true
 	repo.StartDate = startDate
 	repo.EndDate = endDate
 
@@ -137,6 +136,9 @@ func (r *repositoryController) GetAllRepositories(ctx context.Context) ([]dtos.R
 			StarsCount:      repo.StarsCount,
 			OpenIssuesCount: repo.OpenIssuesCount,
 			WatchersCount:   repo.WatchersCount,
+			StartDate:       repo.StartDate.String(),
+			EndDate:         repo.EndDate.String(),
+			IsTracking:      repo.IsTracking,
 		}
 
 		repositoryResponse = append(repositoryResponse, rr)

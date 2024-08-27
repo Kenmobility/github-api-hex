@@ -19,8 +19,9 @@ func NewGormCommitRepository(db *gorm.DB) domain.CommitRepository {
 }
 
 // SaveCommit stores a repository commit into the database
-func (gc *GormCommitRepository) SaveCommit(ctx context.Context, commit domain.Commit) error {
-	return gc.DB.WithContext(ctx).Create(&commit).Error
+func (gc *GormCommitRepository) SaveCommit(ctx context.Context, commit domain.Commit) (*domain.Commit, error) {
+	err := gc.DB.WithContext(ctx).Create(&commit).Error
+	return &commit, err
 }
 
 // GetAllCommitsByRepositoryName fetches all stores commits by repository name

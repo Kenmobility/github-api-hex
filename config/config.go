@@ -51,7 +51,7 @@ func LoadConfig(path string) *Config {
 
 	startDate := os.Getenv("DEFAULT_START_DATE")
 	if startDate == "" {
-		sDate = time.Now().AddDate(0, -6, 0)
+		sDate = time.Now().AddDate(0, -10, 0)
 	} else {
 		sDate, err = time.Parse(time.RFC3339, startDate)
 		if err != nil {
