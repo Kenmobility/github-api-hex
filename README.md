@@ -18,12 +18,13 @@ cp .env.example .env
 
 ## 3. Set environmental variables:
 - the duplicated .env.example file already has default variables that the program needs to run except for GIT_HUB_TOKEN variable. (feel free to change the values as you like).
-- go to [https://github.com/](GitHub) to set up a GitHub API token and set value for the GIT_HUB_TOKEN env variable. OR make use of the default one below (Expires on Thu, Sep 26 2024.)
-```bash
-GIT_HUB_TOKEN=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
-```
-- if the default values of the DATABASE_HOST,DATABASE_PORT,DATABASE_USER,DATABASE_PASSWORD and DATABASE_NAME# in .env.example file were altered, ensure that the make file matches to the new value
--p 5439:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret
+- go to [https://github.com/](GitHub) to set up a GitHub API token and set value for the GIT_HUB_TOKEN env variable. OR make use of the set default one which expires on Thu, Sep 26 2024.
+
+- (OPTIONAL) if the default values of the DATABASE_HOST, DATABASE_PORT, DATABASE_USER, DATABASE_PASSWORD or DATABASE_NAME in .env file were altered, ensure that the 'make postgres' command in the makefile matches the new set values.
+  ```bash
+  postgres: 
+	  docker run --name github-api-hex-db-con -p {DATABASE_PORT}:5432 -e POSTGRES_USER={DATABASE_USER} -e POSTGRES_PASSWORD={DATABASE_PASSWORD} -d postgres:14-alpine
+  ```
 
 ## 4 Open Docker desktop application
 - Ensure that docker desktop is started and running on your machine 
