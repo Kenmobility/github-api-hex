@@ -10,10 +10,9 @@ import (
 	"github.com/kenmobility/github-api-hex/db"
 	"github.com/kenmobility/github-api-hex/internal/controllers"
 	"github.com/kenmobility/github-api-hex/internal/handlers"
-	"github.com/kenmobility/github-api-hex/internal/integrations/api"
 	"github.com/kenmobility/github-api-hex/internal/repositories"
 	"github.com/kenmobility/github-api-hex/internal/routes"
-	"github.com/kenmobility/github-api-hex/services"
+	"github.com/kenmobility/github-api-hex/services/github"
 )
 
 func main() {
@@ -38,15 +37,11 @@ func main() {
 	commitHandler := handlers.NewCommitHandler(commitController)
 	repositoryHandler := handlers.NewRepositoryHandler(repoController)
 
-	// Initialize API Client
-	gitHubAPIClient := api.NewGitHubAPI(config.GitHubApiBaseURL, config.GitHubToken, commitRepo, repoRepo)
+	// Initialize Github Tracker service
+	trackerService := github.NewGitHubAPIClient(config.GitHubApiBaseURL, config.GitHubToken, config.FetchInterval, commitRepo, repoRepo)
 
-	// instantiate the GitHubAPI service
-	githubService := services.NewGithubService(gitHubAPIClient, commitRepo,
-		repoRepo, config)
-
-	// start GitHub tracking service asynchronously
-	go githubService.StartTracking()
+	//start GitHub tracking service asynchronously
+	go trackerService.StartTracking(config.FetchInterval)
 
 	server := gin.New()
 

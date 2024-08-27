@@ -1,5 +1,6 @@
 .idea
 *error.log
+.env
 notes.md
 data/
 http/
