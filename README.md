@@ -5,7 +5,7 @@ This service fetches data from GitHub's public APIs to retrieve repository commi
 ## Requirements- Golang 1.20+
 - PostgreSQL
 
-## 1. Clone the repository and download go dependencies
+## 1. Clone the repository, cd into the project folder and download required go dependencies
 ```bash
 git clone https://github.com/kenmobility/github-api-hex.git
 cd github-api-hex
@@ -17,11 +17,14 @@ cp .env.example .env
 ```
 
 ## 3. environment variables:
-- the .env file already has default variables that the program needs to run but for security reason, you can change the variables to your custom details.
-- to setup GitHub API token in order to change the GIT_HUB_TOKEN env variable, go to  [https://github.com/](GitHub) to set up a GitHub API token.
+- the .env file already has default variables that the program needs to run aside GIT_HUB_TOKEN variable. However, you can change to your credentials.
+- to setup GitHub API token in order to set value for the GIT_HUB_TOKEN env variable, go to  [https://github.com/](GitHub) to set up a GitHub API token. OR make use of the default one below (Expires on Thu, Sep 26 2024.)
+```bash
+GIT_HUB_TOKEN=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
+```
 
 ## 4 Open Docker desktop application
-- Ensure that docker desktop is started and running 
+- Ensure that docker desktop is started and running on your machine 
 
 ## 5. Run makefile commands 
 - run 'make postgres' to pull and run PostgreSQL instance as docker container
