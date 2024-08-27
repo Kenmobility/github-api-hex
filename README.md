@@ -8,7 +8,11 @@ This service fetches data from GitHub's public APIs to retrieve repository commi
 ## 1. Clone the repository, cd into the project folder and download required go dependencies
 ```bash
 git clone https://github.com/kenmobility/github-api-hex.git
+```
+```bash
 cd github-api-hex
+```
+```bash
 go mod tidy
 ```
 ## 2. Run below command to Duplicate .env.example file and rename to .env
@@ -29,7 +33,13 @@ cp .env.example .env
 ## 4 Open Docker desktop application
 - Ensure that docker desktop is started and running on your machine 
 
-## 5. Run makefile commands 
+## 5. Attempt Removal of postgres container name
+- run 'docker rm github-api-hex-db-con' to ensure that container name for postgreSQL does not exist 
+```bash
+docker rm github-api-hex-db-con
+``` 
+
+## 6. Run makefile commands 
 - run 'make postgres' to pull and run PostgreSQL instance as docker container
 ```bash
 make postgres
@@ -38,19 +48,19 @@ make postgres
 ```bash
 make createdb
 ```
-## 6. Unit Testing
+## 7. Unit Testing
 
 Run 'make test' to run the unit tests:
 ```bash
 make test
 ```
-## 7. Start web server
+## 8. Start web server
 - run 'make server' to start the service
 ```bash
 make server
 ```
 
-## 8. Endpoint requests
+## 9. Endpoint requests
 - POST application/json Request to add a new repository
 ``` 
 curl -d '{"name": "GoogleChrome/chromium-dashboard","description": "","url": "https://github.com/GoogleChrome/chromium-dashboard"}'\
