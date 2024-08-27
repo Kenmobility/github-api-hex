@@ -38,7 +38,7 @@ make postgres
 ```bash
 make createdb
 ```
-## 6. Testing (optional)
+## 6. Unit Testing
 
 Run 'make test' to run the unit tests:
 ```bash
