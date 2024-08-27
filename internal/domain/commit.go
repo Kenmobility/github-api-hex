@@ -21,7 +21,7 @@ type Commit struct {
 }
 
 type CommitRepository interface {
-	SaveCommit(ctx context.Context, commit Commit) error
+	SaveCommit(ctx context.Context, commit Commit) (*Commit, error)
 	AllCommitsByRepository(ctx context.Context, repo Repository, query dtos.APIPagingDto) (*dtos.AllCommitsResponse, error)
 	TopCommitAuthorsByRepository(ctx context.Context, repository Repository, limit int) ([]string, error)
 }

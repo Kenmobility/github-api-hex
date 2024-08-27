@@ -80,7 +80,8 @@ func (g *GitHubAPIClient) FetchAndSaveCommits(ctx context.Context, repo domain.R
 		for _, commit := range result {
 			commit.RepositoryID = repo.ID
 
-			if err := g.commitRepository.SaveCommit(ctx, commit); err != nil {
+			_, err := g.commitRepository.SaveCommit(ctx, commit)
+			if err != nil {
 				log.Printf("Error saving commit id-%s: %v\n", commit.CommitID, err)
 			}
 		}

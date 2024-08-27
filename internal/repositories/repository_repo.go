@@ -56,6 +56,8 @@ func (r *GormRepositoryRepository) TrackRepository(ctx context.Context, reposito
 		return nil, err
 	}
 	// Set the specified repository to tracking
+	repository.IsTracking = true
+
 	err = r.DB.WithContext(ctx).Model(&domain.Repository{}).Where("public_id = ?", repository.PublicID).
 		Updates(&repository).Error
 

@@ -1,8 +1,9 @@
-package unit
+package tests
 
 import (
 	"fmt"
 	"log"
+	"os"
 	"testing"
 
 	"github.com/kenmobility/github-api-hex/common/helpers"
@@ -17,8 +18,7 @@ var (
 
 func TestMain(m *testing.M) {
 	var err error
-
-	config := config.LoadConfig("../../.env")
+	config := config.LoadConfig("../.env")
 
 	conString := fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s password=%s",
@@ -28,7 +28,6 @@ func TestMain(m *testing.M) {
 		config.DatabaseName,
 		config.DatabasePassword,
 	)
-	fmt.Println("con string: ", conString)
 	if helpers.IsLocal() {
 		conString += " sslmode=disable"
 	}
@@ -37,4 +36,6 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("failed to connect to postgres database: %v", err)
 	}
+
+	os.Exit(m.Run())
 }

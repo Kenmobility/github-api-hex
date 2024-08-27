@@ -22,4 +22,7 @@ type RepositoryResponse struct {
 	StarsCount      int    `json:"stars_count"`
 	OpenIssuesCount int    `json:"open_issues_count"`
 	WatchersCount   int    `json:"watchers_count"`
+	StartDate       string `json:"start_date"`
+	EndDate         string `json:"end_date"`
+	IsTracking      bool   `json:"is_tracking"`
 }

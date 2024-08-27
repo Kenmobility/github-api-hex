@@ -44,5 +44,7 @@ func (r Repository) ToDto() dtos.RepositoryResponse {
 		StarsCount:      r.StarsCount,
 		OpenIssuesCount: r.OpenIssuesCount,
 		WatchersCount:   r.WatchersCount,
+		StartDate:       r.StartDate.String(),
+		EndDate:         r.EndDate.String(),
 	}
 }

@@ -4,9 +4,14 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
+
+	"math/rand"
 
 	"gopkg.in/go-playground/validator.v9"
 )
+
+const alphabet = "abcdefghijklmnopqrstuvwxyz"
 
 // IsLocal returns true or false depending on APP_ENV environmental variable's value
 func IsLocal() bool {
@@ -46,4 +51,45 @@ func ValidateInput(input interface{}) []string {
 	}
 
 	return errors
+}
+
+// RandomString generates a random string of length n
+func RandomString(n int) string {
+	var sb strings.Builder
+	k := len(alphabet)
+
+	for i := 0; i < n; i++ {
+		c := alphabet[rand.Intn(k)]
+		sb.WriteByte(c)
+	}
+
+	return sb.String()
+}
+
+func RandomRepositoryName() string {
+	return fmt.Sprintf("%s/%s", RandomString(6), RandomString(6))
+}
+
+func RandomRepositoryUrl() string {
+	return fmt.Sprintf("https://github.com/%s/%s", RandomString(6), RandomString(6))
+}
+
+func RandomFetchStartDate() time.Time {
+	return time.Now().AddDate(0, -8, 0)
+}
+
+func RandomFetchEndDate() time.Time {
+	return time.Now()
+}
+
+func RandomWords(words int) string {
+	var sb strings.Builder
+
+	for i := 0; i < words; i++ {
+		m := RandomString(5)
+		sb.WriteString(m)
+		sb.WriteString(" ")
+	}
+
+	return sb.String()
 }
