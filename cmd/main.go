@@ -22,9 +22,6 @@ func main() {
 	// establish database connection
 	db := db.NewDatabase(*config)
 
-	// seed 'chromium/chromium' repo as default repository to repositories table
-	db.SeedRepository(config)
-
 	// Initialize repositories
 	commitRepo := repositories.NewGormCommitRepository(db.Db)
 	repoRepo := repositories.NewGormRepositoryRepository(db.Db)
@@ -36,6 +33,9 @@ func main() {
 	// Initialize handlers
 	commitHandler := handlers.NewCommitHandler(commitController)
 	repositoryHandler := handlers.NewRepositoryHandler(repoController)
+
+	// seed and set 'chromium/chromium' repo as default repository to track
+	db.SeedRepository(config)
 
 	// Initialize Github Tracker service
 	trackerService := github.NewGitHubAPIClient(config.GitHubApiBaseURL, config.GitHubToken, config.FetchInterval, commitRepo, repoRepo)

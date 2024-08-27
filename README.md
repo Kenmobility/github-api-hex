@@ -48,6 +48,11 @@ make postgres
 ```bash
 make createdb
 ```
+- run 'make migrate' to perform database migration
+```bash
+make migrate
+```
+
 ## 7. Unit Testing
 
 Run 'make test' to run the unit tests:

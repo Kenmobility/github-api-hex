@@ -28,6 +28,7 @@ type Repository struct {
 type RepositoryRepository interface {
 	SaveRepository(ctx context.Context, repository Repository) (*Repository, error)
 	RepositoryByPublicId(ctx context.Context, publicId string) (*Repository, error)
+	RepositoryByName(ctx context.Context, name string) (*Repository, error)
 	AllRepositories(ctx context.Context) ([]Repository, error)
 	TrackedRepository(ctx context.Context) (*Repository, error)
 	TrackRepository(ctx context.Context, repository Repository) (*Repository, error)

@@ -7,10 +7,13 @@ createdb:
 dropdb:
 	docker exec -it github-api-hex-db-con dropdb github_api_db
 
+migrate: 
+	go run db/migration/migrate.go
+
 test:
-	go test -v -cover ./...
+	go test -v ./...
 
 server: 
 	go run cmd/main.go
 
-.PHONY: postgres createdb dropdb test server
+.PHONY: postgres createdb dropdb migrate test server

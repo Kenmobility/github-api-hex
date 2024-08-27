@@ -1,9 +1,12 @@
 package db
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	"github.com/kenmobility/github-api-hex/config"
 	"github.com/kenmobility/github-api-hex/internal/domain"
+	"github.com/kenmobility/github-api-hex/internal/repositories"
 	"gorm.io/gorm"
 )
 
@@ -22,21 +25,30 @@ type Seeder interface {
 	SeedRepository(c *Database, config *config.Config) error
 }
 
-// SeedRepository seeds a default chromium repo with tracking as true
+// SeedRepository seeds a default chromium repo and set it as tracking
 func (d *Database) SeedRepository(config *config.Config) error {
 	repository := domain.Repository{
-		PublicID:   uuid.New().String(),
-		Name:       "chromium/chromium",
-		URL:        "https://github.com/chromium/chromium",
-		IsTracking: true,
-		StartDate:  config.DefaultStartDate,
-		EndDate:    config.DefaultEndDate,
+		PublicID:  uuid.New().String(),
+		Name:      "chromium/chromium",
+		URL:       "https://github.com/chromium/chromium",
+		StartDate: config.DefaultStartDate,
+		EndDate:   config.DefaultEndDate,
 	}
 
-	err := d.Db.Create(&repository).Error
+	repoRepository := repositories.NewGormRepositoryRepository(d.Db)
+
+	fRepo, err := repoRepository.RepositoryByName(context.Background(), repository.Name)
+	if err == nil {
+		//default repository already seeded, set as tracking
+		_, err = repoRepository.TrackRepository(context.Background(), *fRepo)
+		return err
+	}
+
+	sRepo, err := repoRepository.SaveRepository(context.Background(), repository)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	_, err = repoRepository.TrackRepository(context.Background(), *sRepo)
+	return err
 }

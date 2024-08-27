@@ -31,6 +31,16 @@ func (r *GormRepositoryRepository) RepositoryByPublicId(ctx context.Context, pub
 	return &repo, err
 }
 
+func (r *GormRepositoryRepository) RepositoryByName(ctx context.Context, name string) (*domain.Repository, error) {
+	var repo domain.Repository
+	err := r.DB.WithContext(ctx).Where("name = ?", name).Find(&repo).Error
+
+	if repo.ID == 0 {
+		return nil, message.ErrNoRecordFound
+	}
+	return &repo, err
+}
+
 func (r *GormRepositoryRepository) AllRepositories(ctx context.Context) ([]domain.Repository, error) {
 	var repositories []domain.Repository
 
