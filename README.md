@@ -11,17 +11,19 @@ git clone https://github.com/kenmobility/github-api-hex.git
 cd github-api-hex
 go mod tidy
 ```
-## 2. Duplicate .env.example file and rename to .env
+## 2. Run below command to Duplicate .env.example file and rename to .env
 ```bash
 cp .env.example .env
 ```
 
-## 3. environment variables:
-- the .env file already has default variables that the program needs to run aside GIT_HUB_TOKEN variable. However, you can change to your credentials.
-- to setup GitHub API token in order to set value for the GIT_HUB_TOKEN env variable, go to  [https://github.com/](GitHub) to set up a GitHub API token. OR make use of the default one below (Expires on Thu, Sep 26 2024.)
+## 3. Set environmental variables:
+- the duplicated .env.example file already has default variables that the program needs to run except for GIT_HUB_TOKEN variable. (feel free to change the values as you like).
+- go to [https://github.com/](GitHub) to set up a GitHub API token and set value for the GIT_HUB_TOKEN env variable. OR make use of the default one below (Expires on Thu, Sep 26 2024.)
 ```bash
 GIT_HUB_TOKEN=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
 ```
+- if the default values of the DATABASE_HOST,DATABASE_PORT,DATABASE_USER,DATABASE_PASSWORD and DATABASE_NAME# in .env.example file were altered, ensure that the make file matches to the new value
+-p 5439:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret
 
 ## 4 Open Docker desktop application
 - Ensure that docker desktop is started and running on your machine 
