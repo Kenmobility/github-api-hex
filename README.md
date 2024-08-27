@@ -5,24 +5,18 @@ This service fetches data from GitHub's public APIs to retrieve repository commi
 ## Requirements- Golang 1.20+
 - PostgreSQL
 
-## Setup1. Clone the repository and download go dependencies
+## 1. Clone the repository and download go dependencies
 ```bash
 git clone https://github.com/kenmobility/github-api-hex.git
-cd github-api
+cd github-api-hex
 go mod tidy
 ```
-## 2. Set up environment variables:
-- use the .env.example format to set up a .env file with environmental variables or run the below
-```bash
-    export GITHUB_TOKEN="your_github_token"
-    export DATABASE_HOST="localhost"
-    export DATABASE_PORT=5432
-    export DATABASE_USER=root
-    export DATABASE_PASSWORD=secret
-    export DATABASE_NAME=github_api_db
-```
-## 3. Edit makefile
-- edit makefile to match your database environmental variables on setup2:
+## 2. environment variables:
+- the .env file already has default variables that the program needs to run but for security reason, you can change the variables to your custom details.
+- to setup GitHub API token in order to change the GIT_HUB_TOKEN env variable, go to  [https://github.com/](GitHub) to set up a GitHub API token.
+
+## 3 Open Docker desktop application
+- Ensure that docker desktop is started and running 
 
 ## 4. Run makefile commands 
 - run 'make postgres' to pull and run PostgreSQL instance as docker container
@@ -33,19 +27,19 @@ make postgres
 ```bash
 make createdb
 ```
-## Testing (optional)
+## 5. Testing (optional)
 
 Run 'make test' to run the unit tests:
 ```bash
 make test
 ```
-## 5. Start web server
+## 6. Start web server
 - run 'make server' to start the service
 ```bash
 make server
 ```
 
-## 6. Endpoint requests
+## 7. Endpoint requests
 - POST application/json Request to add a new repository
 ``` 
 curl -d '{"name": "GoogleChrome/chromium-dashboard","description": "","url": "https://github.com/GoogleChrome/chromium-dashboard"}'\
