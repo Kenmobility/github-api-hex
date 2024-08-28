@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -23,6 +24,13 @@ type GitHubAPIClient struct {
 	commitRepository     domain.CommitRepository
 	repositoryRepository domain.RepositoryRepository
 	client               *client.RestClient
+	rateLimitFields      rateLimitFields
+}
+
+type rateLimitFields struct {
+	rateLimitLimit     int
+	rateLimitRemaining int
+	rateLimitReset     int64
 }
 
 func (g *GitHubAPIClient) getHeaders() map[string]string {
@@ -125,6 +133,17 @@ func (g *GitHubAPIClient) fetchCommitsPage(url string) ([]dtos.GithubCommitRespo
 		return nil, "", nil
 	}
 
+	if response.StatusCode == http.StatusForbidden {
+		return nil, "", fmt.Errorf("*************rate limit exceeded*************")
+	}
+
+	g.updateRateLimitHeaders(response)
+
+	if g.rateLimitFields.rateLimitRemaining == 0 {
+		waitTime := time.Until(time.Unix(g.rateLimitFields.rateLimitReset, 0))
+		log.Printf("Rate limit exceeded. Waiting for %v until reset...", waitTime)
+	}
+
 	if response.StatusCode != http.StatusOK {
 		return nil, "", fmt.Errorf("failed to fetch commits; status code: %v", response.StatusCode)
 	}
@@ -162,4 +181,29 @@ func (api *GitHubAPIClient) parseNextURL(linkHeader []string) string {
 	}
 
 	return ""
+}
+
+func (api *GitHubAPIClient) updateRateLimitHeaders(resp *client.Response) {
+	limit := resp.Headers["X-Ratelimit-Limit"]
+
+	if len(limit) > 0 {
+		api.rateLimitFields.rateLimitReset, _ = strconv.ParseInt(limit[0], 10, 64)
+	}
+
+	remaining := resp.Headers["X-Ratelimit-Remaining"]
+
+	if len(remaining) > 0 {
+		api.rateLimitFields.rateLimitRemaining, _ = strconv.Atoi(remaining[0])
+	}
+
+	reset := resp.Headers["X-Ratelimit-Reset"]
+	if len(reset) > 0 {
+		api.rateLimitFields.rateLimitReset, _ = strconv.ParseInt(reset[0], 10, 64)
+	}
+
+	used := resp.Headers["X-Ratelimit-Used"]
+	if len(used) > 0 {
+		usedInt, _ := strconv.Atoi(used[0])
+		log.Printf("Rate limit used: %d/%d", usedInt, api.rateLimitFields.rateLimitLimit)
+	}
 }
