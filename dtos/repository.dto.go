@@ -7,9 +7,9 @@ type AddRepositoryRequestDto struct {
 }
 
 type TrackRepositoryRequestDto struct {
-	RepoPublicId string `json:"repo_id" validate:"required"`
-	StartDate    string `json:"start_date"`
-	EndDate      string `json:"end_date"`
+	RepoId    string `json:"repo_id" validate:"required"`
+	StartDate string `json:"start_date"`
+	EndDate   string `json:"end_date"`
 }
 
 type RepositoryResponse struct {

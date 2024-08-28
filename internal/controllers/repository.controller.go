@@ -58,7 +58,7 @@ func (r *repositoryController) AddRepository(ctx context.Context, data dtos.AddR
 }
 
 func (r *repositoryController) TrackRepository(ctx context.Context, data dtos.TrackRepositoryRequestDto) (*dtos.RepositoryResponse, error) {
-	repo, err := r.repositoryRepo.RepositoryByPublicId(ctx, data.RepoPublicId)
+	repo, err := r.repositoryRepo.RepositoryByPublicId(ctx, data.RepoId)
 
 	if err != nil && err == message.ErrNoRecordFound {
 		return nil, message.ErrRepositoryNotFound
