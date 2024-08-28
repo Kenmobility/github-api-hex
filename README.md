@@ -79,14 +79,14 @@ curl -L \
   -X GET http://127.0.0.1:5000/repositories \
 ```
 
-- GET Request to fetch all the commits fetched from github API for any repo using repository public Id 
+- GET Request to fetch all the commits fetched from github API for any repo using repository Id 
 ```
 curl \
   -X GET http://127.0.0.1:5000/commits/5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a \
 ```
 
-- POST application/json Request to set a new repository to track an added repository using its repository public id. 
-- payload only requires 'repo-public_id' field, others are optional.
+- POST application/json Request to set a new repository to track an added repository using its repository id. 
+- payload only requires 'repo_id' field, others are optional.
 - if a valid start_date is passed, date value is used as 'since' while the service is fetching commits for that particular repository else the default start date in the config is used.
 - if a valid end_date field value is passed, date value is used as 'until' while the service is fetching commits for that particular repository else the default end date in the config is used.
 ``` 
