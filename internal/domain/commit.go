@@ -28,7 +28,6 @@ type CommitRepository interface {
 
 func (c Commit) ToDto() dtos.CommitResponse {
 	return dtos.CommitResponse{
-		ID:         c.ID,
 		CommitID:   c.CommitID,
 		Message:    c.Message,
 		Author:     c.Author,

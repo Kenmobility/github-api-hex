@@ -27,7 +27,6 @@ type (
 )
 
 type CommitResponse struct {
-	ID         uint      `json:"id"`
 	CommitID   string    `json:"commit_id"`
 	Message    string    `json:"message"`
 	Author     string    `json:"author"`

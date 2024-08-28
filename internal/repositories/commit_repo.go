@@ -79,7 +79,6 @@ func commitResponse(commits []domain.Commit) []dtos.CommitResponse {
 
 	for _, c := range commits {
 		cr := dtos.CommitResponse{
-			ID:         c.ID,
 			CommitID:   c.CommitID,
 			Message:    c.Message,
 			Author:     c.Author,

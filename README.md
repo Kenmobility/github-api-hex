@@ -90,7 +90,7 @@ curl \
 - if a valid start_date is passed, date value is used as 'since' while the service is fetching commits for that particular repository else the default start date in the config is used.
 - if a valid end_date field value is passed, date value is used as 'until' while the service is fetching commits for that particular repository else the default end date in the config is used.
 ``` 
-curl -d '{"repo_public_id": "5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a","start_date": "","end_date": ""}'\
+curl -d '{"repo_id": "5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a","start_date": "","end_date": ""}'\
   -H "Content-Type: application/json" \
   -X POST http://127.0.0.1:5000/repository/track \
 ```
