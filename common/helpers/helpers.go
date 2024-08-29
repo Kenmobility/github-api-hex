@@ -30,10 +30,12 @@ func Getenv(variable string, defaultValue ...string) string {
 	return env
 }
 
+// IsRepositoryNameValid validates the repository name
 func IsRepositoryNameValid(repoName string) bool {
 	return strings.Contains(repoName, "/")
 }
 
+// ValidateInput validates structs fields with tags
 func ValidateInput(input interface{}) []string {
 	var errors []string
 	v := validator.New()
@@ -66,22 +68,27 @@ func RandomString(n int) string {
 	return sb.String()
 }
 
+// RandomRepositoryName generates a random repository name
 func RandomRepositoryName() string {
 	return fmt.Sprintf("%s/%s", RandomString(6), RandomString(6))
 }
 
+// RandomRepositoryUrl generates a random repository URL
 func RandomRepositoryUrl() string {
 	return fmt.Sprintf("https://github.com/%s/%s", RandomString(6), RandomString(6))
 }
 
+// RandomFetchStartDate generates a random start date for fetching commits
 func RandomFetchStartDate() time.Time {
 	return time.Now().AddDate(0, -8, 0)
 }
 
+// RandomFetchEndDate generates a random end date for fetching commits
 func RandomFetchEndDate() time.Time {
 	return time.Now()
 }
 
+// RandomWords generates some random words of specified length
 func RandomWords(words int) string {
 	var sb strings.Builder
 

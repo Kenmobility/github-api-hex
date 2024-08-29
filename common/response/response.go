@@ -9,6 +9,7 @@ type ResponseObject struct {
 	Error   interface{} `json:"error,omitempty"`
 }
 
+// Success is used to send a successful request response
 func Success(c *gin.Context, code int, message string, data interface{}) {
 	obj := ResponseObject{
 		Code:    code,
@@ -21,6 +22,7 @@ func Success(c *gin.Context, code int, message string, data interface{}) {
 	c.JSON(code, obj)
 }
 
+// Failure is used to send a failed request response
 func Failure(c *gin.Context, code int, message string, error interface{}) {
 	obj := ResponseObject{
 		Code:    code,

@@ -33,8 +33,8 @@ cp .env.example .env
 ## 4 Open Docker desktop application
 - Ensure that docker desktop is started and running on your machine 
 
-## 5. Attempt Removal of postgres container name
-- run 'docker rm github-api-hex-db-con' to ensure that container name for postgreSQL does not exist 
+## 5. Attempt Removal of postgres container by name
+- run 'docker rm github-api-hex-db-con' to ensure that the container name for postgreSQL does not exist already
 ```bash
 docker rm github-api-hex-db-con
 ``` 
