@@ -10,7 +10,7 @@ type Commit struct {
 	Author         string    `json:"author"`
 	Date           time.Time `json:"date"`
 	URL            string    `json:"url"`
-	RepositoryName string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	RepositoryName string    `json:"repo_name"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
 }
