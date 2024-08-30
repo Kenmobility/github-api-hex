@@ -9,5 +9,5 @@ import (
 
 type RepositoryTracker interface {
 	FetchAndSaveCommits(ctx context.Context, repo domain.Repository, since time.Time, until time.Time) ([]domain.Commit, error)
-	StartTracking(fetchInterval time.Duration)
+	StartTracking(ctx context.Context, fetchInterval time.Duration) error
 }

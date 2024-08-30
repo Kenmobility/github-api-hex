@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
@@ -17,14 +18,26 @@ import (
 
 func main() {
 	// load env variables
-	config := config.LoadConfig("")
+	config, err := config.LoadConfig("")
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
 
 	// establish database connection
-	db := db.NewDatabase(*config)
+	database, err := db.NewDatabase(*config)
+	if err != nil {
+		log.Fatalf("failed to establish database connection: %v", err)
+	}
+
+	// seed and set 'chromium/chromium' repo as default repository to track
+	err = database.SeedRepository(config)
+	if err != nil {
+		log.Fatalf("failed to seed default repository to database: %v", err)
+	}
 
 	// Initialize repositories
-	commitRepo := repositories.NewGormCommitRepository(db.Db)
-	repoRepo := repositories.NewGormRepositoryRepository(db.Db)
+	commitRepo := repositories.NewGormCommitRepository(database.Db)
+	repoRepo := repositories.NewGormRepositoryRepository(database.Db)
 
 	// Initialize controllers
 	commitController := controllers.NewCommitController(commitRepo, repoRepo)
@@ -34,23 +47,35 @@ func main() {
 	commitHandler := handlers.NewCommitHandler(commitController)
 	repositoryHandler := handlers.NewRepositoryHandler(repoController)
 
-	// seed and set 'chromium/chromium' repo as default repository to track
-	db.SeedRepository(config)
-
 	// Initialize Github Tracker service
 	trackerService := github.NewGitHubAPIClient(config.GitHubApiBaseURL, config.GitHubToken, config.FetchInterval, commitRepo, repoRepo)
 
-	//start GitHub tracking service asynchronously
-	go trackerService.StartTracking(config.FetchInterval)
-
-	server := gin.New()
+	ginEngine := gin.Default()
 
 	// register routes
-	routes.CommitRoutes(server, commitHandler)
-	routes.RepositoryRoutes(server, repositoryHandler)
+	routes.CommitRoutes(ginEngine, commitHandler)
+	routes.RepositoryRoutes(ginEngine, repositoryHandler)
 
-	//run server
-	if err := server.Run(fmt.Sprintf("%s:%s", config.Address, config.Port)); err != nil && err != http.ErrServerClosed {
-		log.Fatalf("listen: %s", err)
+	server := &http.Server{
+		Addr:    fmt.Sprintf("%s:%s", config.Address, config.Port),
+		Handler: ginEngine,
 	}
+
+	// start web server
+	go func() {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %v\n", err)
+		}
+		log.Printf("GitHub Service is listening on address %s", server.Addr)
+	}()
+
+	// create a context with cancellation to gracefully shut down GitHub tracker service if server shuts down
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	defer cancelFunc()
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("Server Shutdown: err=%v", err)
+	}
+
+	//start GitHub tracking service asynchronously
+	go log.Println(trackerService.StartTracking(ctx, config.FetchInterval))
 }

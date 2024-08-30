@@ -10,10 +10,16 @@ import (
 
 func main() {
 	// load env variables
-	config := config.LoadConfig("")
+	config, err := config.LoadConfig("")
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
 
 	// establish database connection
-	db := db.NewDatabase(*config)
+	db, err := db.NewDatabase(*config)
+	if err != nil {
+		log.Fatalf("failed to establish database connection: %v", err)
+	}
 
 	if err := db.Db.AutoMigrate(&domain.Repository{}, &domain.Commit{}); err != nil {
 		log.Fatalf("failed to migrate database: %v", err)

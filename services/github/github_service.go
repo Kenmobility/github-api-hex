@@ -100,15 +100,19 @@ func (g *GitHubAPIClient) FetchAndSaveCommits(ctx context.Context, repo domain.R
 	return result, nil
 }
 
-func (g GitHubAPIClient) StartTracking(fetchInterval time.Duration) {
+func (g GitHubAPIClient) StartTracking(ctx context.Context, fetchInterval time.Duration) error {
 	for {
-		g.runRepositoryTracker()
-		time.Sleep(fetchInterval)
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			g.runRepositoryTracker(ctx)
+			time.Sleep(fetchInterval)
+		}
 	}
 }
 
-func (g GitHubAPIClient) runRepositoryTracker() {
-	ctx := context.Background()
+func (g GitHubAPIClient) runRepositoryTracker(ctx context.Context) {
 
 	trackedRepo, err := g.repositoryRepository.TrackedRepository(ctx)
 	if err != nil {

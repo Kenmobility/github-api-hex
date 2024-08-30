@@ -26,14 +26,15 @@ type Config struct {
 	Port             string
 }
 
-func LoadConfig(path string) *Config {
+func LoadConfig(path string) (*Config, error) {
 	var err error
 
 	if path == "" {
 		path = ".env"
 	}
 	if err := godotenv.Load(path); err != nil {
-		log.Fatal("env config error: ", err)
+		log.Println("env config error: ", err)
+		return nil, err
 	}
 
 	interval := os.Getenv("FETCH_INTERVAL")
@@ -43,7 +44,8 @@ func LoadConfig(path string) *Config {
 
 	intervalDuration, err := time.ParseDuration(interval)
 	if err != nil {
-		log.Fatalf("Invalid FETCH_INTERVAL :[%s] env format: %v", interval, err)
+		log.Printf("Invalid FETCH_INTERVAL :[%s] env format: %v", interval, err)
+		return nil, err
 	}
 
 	var sDate time.Time
@@ -55,7 +57,8 @@ func LoadConfig(path string) *Config {
 	} else {
 		sDate, err = time.Parse(time.RFC3339, startDate)
 		if err != nil {
-			log.Fatalf("Invalid DEFAULT_START_DATE [%s] env format: %v", startDate, err)
+			log.Printf("Invalid DEFAULT_START_DATE [%s] env format: %v", startDate, err)
+			return nil, err
 		}
 	}
 
@@ -65,7 +68,8 @@ func LoadConfig(path string) *Config {
 	} else {
 		eDate, err = time.Parse(time.RFC3339, endDate)
 		if err != nil {
-			log.Fatalf("Invalid DEFAULT_END_DATE [%s] env format: %v", endDate, err)
+			log.Printf("Invalid DEFAULT_END_DATE [%s] env format: %v", endDate, err)
+			return nil, err
 		}
 	}
 
@@ -82,14 +86,15 @@ func LoadConfig(path string) *Config {
 		DefaultEndDate:   eDate,
 		GitHubApiBaseURL: os.Getenv("GITHUB_API_BASE_URL"),
 		Address:          helpers.Getenv("ADDRESS", "127.0.0.1"),
-		Port:             helpers.Getenv("PORT", "5000"),
+		Port:             helpers.Getenv("PORT", ":5000"),
 	}
 
 	validate := validator.New()
 	err = validate.Struct(configVar)
 	if err != nil {
-		log.Fatalf("env validation error: %s", err.Error())
+		log.Printf("env validation error: %s", err.Error())
+		return nil, err
 	}
 
-	return &configVar
+	return &configVar, nil
 }

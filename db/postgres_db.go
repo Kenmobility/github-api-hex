@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func connectPostgresDb(config config.Config) *gorm.DB {
+func connectPostgresDb(config config.Config) (*gorm.DB, error) {
 	conString := fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s password=%s",
 		config.DatabaseHost,
@@ -25,7 +25,8 @@ func connectPostgresDb(config config.Config) *gorm.DB {
 
 	db, err := gorm.Open(postgres.Open(conString), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("failed to connect to postgres database: %v", err)
+		log.Printf("failed to connect to postgres database: %v", err)
+		return nil, err
 	}
-	return db
+	return db, nil
 }

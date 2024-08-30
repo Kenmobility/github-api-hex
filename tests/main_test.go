@@ -18,7 +18,10 @@ var (
 
 func TestMain(m *testing.M) {
 	var err error
-	config := config.LoadConfig("../.env")
+	config, err := config.LoadConfig("../.env")
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
 
 	conString := fmt.Sprintf(
 		"host=%s port=%s user=%s dbname=%s password=%s",
