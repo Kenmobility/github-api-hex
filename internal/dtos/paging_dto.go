@@ -6,7 +6,6 @@ type (
 		Page      int    `json:"page,omitempty"`
 		Sort      string `json:"sort,omitempty"`
 		Direction string `json:"direction,omitempty"`
-		//Paginate  string   `json:"paginate,omitempty"`
 	}
 
 	PagingInfo struct {

@@ -1,11 +1,9 @@
-package main
-
 import (
 	"log"
 
-	"github.com/kenmobility/github-api-hex/config"
-	"github.com/kenmobility/github-api-hex/db"
-	"github.com/kenmobility/github-api-hex/internal/domain"
+	"github.com/kenmobility/github-api-service/config"
+	"github.com/kenmobility/github-api-service/db"
+	"github.com/kenmobility/github-api-service/internal/domain"
 )
 
 func main() {

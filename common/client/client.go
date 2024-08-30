@@ -24,7 +24,7 @@ const (
 )
 
 // Client is an enhanced http.Client.
-// Can be plugged in cache, etc
+// Can plug in cache, etc
 type RestClient struct{}
 
 func NewRestClient() *RestClient {

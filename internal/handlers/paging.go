@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kenmobility/github-api-hex/dtos"
+	"github.com/kenmobility/github-api-service/internal/dtos"
 )
 
 func getPagingInfo(c *gin.Context) dtos.APIPagingDto {

@@ -6,10 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/kenmobility/github-api-hex/common/helpers"
-	"github.com/kenmobility/github-api-hex/dtos"
-	"github.com/kenmobility/github-api-hex/internal/domain"
-	"github.com/kenmobility/github-api-hex/internal/repositories"
+	"github.com/kenmobility/github-api-service/common/helpers"
+	"github.com/kenmobility/github-api-service/internal/dtos"
+	"github.com/kenmobility/github-api-service/internal/repositories"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -43,7 +42,7 @@ func Test_AllCommitsByRepository(t *testing.T) {
 	require.Equal(t, repo.Name, commitRes.Commits[2].Repository)
 }
 
-func createRandomCommit(t *testing.T, repo domain.Repository, ci domain.CommitRepository) domain.Commit {
+func createRandomCommit(t *testing.T, repo models.Repository, ci domain.CommitRepository) domain.Commit {
 	require.NotEmpty(t, repo)
 	require.NotZero(t, repo.ID)
 

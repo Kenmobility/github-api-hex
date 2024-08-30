@@ -7,7 +7,7 @@ This service fetches data from GitHub's public APIs to retrieve repository commi
 
 ## 1. Clone the repository, cd into the project folder and download required go dependencies
 ```bash
-git clone https://github.com/kenmobility/github-api-hex.git
+git clone https://github.com/kenmobility/github-api-service.git
 ```
 ```bash
 cd github-api-hex
@@ -68,36 +68,32 @@ make server
 ## 9. Endpoint requests
 - POST application/json Request to add a new repository
 ``` 
-curl -d '{"name": "GoogleChrome/chromium-dashboard","description": "","url": "https://github.com/GoogleChrome/chromium-dashboard"}'\
+curl -d '{"name": "GoogleChrome/chromium-dashboard"}'\
   -H "Content-Type: application/json" \
-  -X POST http://127.0.0.1:5000/repository \
+  -X POST http://localhost:5000/repository \
 ```
 
 - GET Request to fetch all the repositories on the database
 ```
 curl -L \
-  -X GET http://127.0.0.1:5000/repositories \
+  -X GET http://localhost:5000/repositories \
 ```
 
 - GET Request to fetch all the commits fetched from github API for any repo using repository Id 
 ```
 curl \
-  -X GET http://127.0.0.1:5000/commits/5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a \
+  -X GET http://localhost:5000/commits/5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a \
 ```
 
-- POST application/json Request to set a new repository to track an added repository using its repository id. 
-- payload only requires 'repo_id' field, others are optional.
-- if a valid start_date is passed, date value is used as 'since' while the service is fetching commits for that particular repository else the default start date in the config is used.
-- if a valid end_date field value is passed, date value is used as 'until' while the service is fetching commits for that particular repository else the default end date in the config is used.
+- GET Request to get repository metadata using repository id. 
 ``` 
-curl -d '{"repo_id": "5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a","start_date": "","end_date": ""}'\
-  -H "Content-Type: application/json" \
-  -X POST http://127.0.0.1:5000/repository/track \
+curl -L \
+  -X GET http://localhost:5000/repository/5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a \
 ```
 
 - GET Request to fetch N (as limit) top commit authors of the any added repository using its repository id with limit as query param
 ```
 curl -L \
-  -X GET http://127.0.0.1:5000/top-authors/5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a?limit=5 \
+  -X GET http://localhost:5000/top-authors/5846c0f0-81f5-45e3-9d4a-cfc6fe4f176a?limit=5 \
 ```
   

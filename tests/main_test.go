@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/kenmobility/github-api-hex/common/helpers"
-	"github.com/kenmobility/github-api-hex/config"
+	"github.com/kenmobility/github-api-service/common/helpers"
+	"github.com/kenmobility/github-api-service/config"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

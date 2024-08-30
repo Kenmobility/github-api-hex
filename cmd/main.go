@@ -7,13 +7,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kenmobility/github-api-hex/config"
-	"github.com/kenmobility/github-api-hex/db"
-	"github.com/kenmobility/github-api-hex/internal/controllers"
-	"github.com/kenmobility/github-api-hex/internal/handlers"
-	"github.com/kenmobility/github-api-hex/internal/repositories"
-	"github.com/kenmobility/github-api-hex/internal/routes"
-	"github.com/kenmobility/github-api-hex/services/github"
+	"github.com/google/uuid"
+	"github.com/kenmobility/github-api-service/config"
+	"github.com/kenmobility/github-api-service/database"
+	"github.com/kenmobility/github-api-service/internal/domains/models"
+	"github.com/kenmobility/github-api-service/internal/domains/services"
+	"github.com/kenmobility/github-api-service/internal/handlers"
+	"github.com/kenmobility/github-api-service/internal/infrastructure/git"
+	"github.com/kenmobility/github-api-service/internal/infrastructure/persistence"
+	"github.com/kenmobility/github-api-service/internal/routes"
+	"github.com/kenmobility/github-api-service/internal/usecases"
 )
 
 func main() {
@@ -24,31 +27,37 @@ func main() {
 	}
 
 	// establish database connection
-	database, err := db.NewDatabase(*config)
+	dbClient := database.NewPostgresDatabase(*config)
+
+	db, err := dbClient.ConnectDb()
 	if err != nil {
-		log.Fatalf("failed to establish database connection: %v", err)
+		log.Fatalf("failed to establish postgres database connection: %v", err)
 	}
 
+	// Run migrations
+	if err := dbClient.Migrate(db); err != nil {
+		log.Fatalf("failed to run migrations: %v", err)
+	}
+
+	// Initialize repositories
+	commitRepo := persistence.NewGormCommitRepository(db)
+	repoMetadataRepo := persistence.NewGormRepositoRepository(db)
+
 	// seed and set 'chromium/chromium' repo as default repository to track
-	err = database.SeedRepository(config)
+	err = seedDefaultRepository(config, repoMetadataRepo)
 	if err != nil {
 		log.Fatalf("failed to seed default repository to database: %v", err)
 	}
 
-	// Initialize repositories
-	commitRepo := repositories.NewGormCommitRepository(database.Db)
-	repoRepo := repositories.NewGormRepositoryRepository(database.Db)
+	gitClient := git.NewGitHubClient(config.GitHubApiBaseURL, config.GitHubToken, config.FetchInterval, commitRepo, repoMetadataRepo)
 
-	// Initialize controllers
-	commitController := controllers.NewCommitController(commitRepo, repoRepo)
-	repoController := controllers.NewRepositoryController(repoRepo, config)
+	// Initialize use cases and handlers
+	gitCommitUsecase := usecases.NewManageGitCommitUsecase(commitRepo, repoMetadataRepo)
+	gitRepositoryUsecase := usecases.NewGitRepositoryUsecase(repoMetadataRepo, commitRepo, gitClient, *config)
 
 	// Initialize handlers
-	commitHandler := handlers.NewCommitHandler(commitController)
-	repositoryHandler := handlers.NewRepositoryHandler(repoController)
-
-	// Initialize Github Tracker service
-	trackerService := github.NewGitHubAPIClient(config.GitHubApiBaseURL, config.GitHubToken, config.FetchInterval, commitRepo, repoRepo)
+	commitHandler := handlers.NewCommitHandler(gitCommitUsecase)
+	repositoryHandler := handlers.NewRepositoryHandler(gitRepositoryUsecase)
 
 	ginEngine := gin.Default()
 
@@ -75,7 +84,29 @@ func main() {
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatalf("Server Shutdown: err=%v", err)
 	}
+}
 
-	//start GitHub tracking service asynchronously
-	go log.Println(trackerService.StartTracking(ctx, config.FetchInterval))
+// SeedRepository seeds a default chromium repo and set it as tracking
+func seedDefaultRepository(config *config.Config, repoRepo services.RepoMetadataRepository) error {
+	defaultRepo := models.RepoMetadata{
+		PublicID: uuid.New().String(),
+		Name:     config.DefaultRepository,
+		URL:      "https://github.com/chromium/chromium",
+		Language: "C++",
+	}
+
+	_, err := repoRepo.RepoMetadataByName(context.Background(), defaultRepo.Name)
+	if err != nil {
+		log.Printf("Repository %s already exists in the database, skipping seeding.", defaultRepo.Name)
+		return err
+	}
+
+	_, err = repoRepo.SaveRepoMetadata(context.Background(), defaultRepo)
+	if err != nil {
+		log.Printf("failed to see default repository: %v", err)
+		return err
+	}
+
+	log.Printf("Successfully seeded default repository: %s", defaultRepo.Name)
+	return err
 }
